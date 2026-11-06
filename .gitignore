@@ -1,0 +1,17 @@
+.gradle/
+**/build/
+local.properties
+.idea/
+*.iml
+*.apk
+*.aab
+*.jks
+*.keystore
+*.log
+.DS_Store
+
+ANDROIDIDE_SETUP.txt
+PREFLIGHT.txt
+
+ANDROIDIDE_SETUP.txt
+PREFLIGHT.txt

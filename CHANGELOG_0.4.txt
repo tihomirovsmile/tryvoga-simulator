@@ -1,0 +1,24 @@
+Trivoga Simulator 0.4.0 (source update, not a compiled APK)
+
++ Country-wide map: oblasts and all retrieved raion boundaries rendered in the same canvas.
++ Pinch-zoom and pan; on-demand hromada and place geometries where they exist.
++ Visual overlay for full oblast / individual raion air alerts and time-based red/yellow shades.
++ Point markers for one-shot threats, disappearing after 30 minutes or an applicable all-clear.
++ Map composer: select oblast, raion or settlement, preview, delay and announce.
++ Air alerts can cover a complete oblast again, as well as individual raions and places.
++ Automatic all-clear with persistent scheduled alarm operations.
++ Change of active air-alert level YELLOW <-> RED, immediately or after a delay.
++ A historical, uneditable baseline for ongoing red alerts in Luhansk and Crimea.
++ Full 31k-ish KATOTTG register via build-time bundling (GitHub Actions) or first-run download.
++ Separate rofl catalogue: ten user-provided parody sounds and images with individual all-clear.
++ Room database migration 1 -> 2 retains existing events / subscriptions.
++ Yellow siren icon derived from red version; no shared static red icon for yellow.
+
+Known limitations:
+- No Android compile or on-device test performed here.
+- Older local build without running the KATOTTG import uses the 168-settlement fallback until download.
+- 11k+ settlements have only point geometry in the cited open dataset: they cannot honestly
+  be drawn as precise territorial polygons. Other settlement outlines load as available.
+- A few Crimean municipalities have no OSM matched polygons; cannot invent a boundary.
+- All system notifications remain distinguishable as simulation, not real civil-defense alerts.
+- Android controls alarm precision, DND, user dismissal and media output.

@@ -1,0 +1,636 @@
+{
+  "version": "0.2.0",
+  "source": "User-uploaded audio archives; verify redistribution rights separately",
+  "files": [
+    {
+      "file": "alarm1.mp3",
+      "bytes": 2058248,
+      "sha256": "6bbe78d006a20690cf1392b77a2902cd08d66fede256c50749658ee941e37393"
+    },
+    {
+      "file": "begin_vulichni_boi_malevoice.mp3",
+      "bytes": 366947,
+      "sha256": "1459e9e4327c3fe750ec8250b1b96ed53a551743585cf1348309c2841fb1f5fe"
+    },
+    {
+      "file": "deprecated_male_air_off_aristovich.mp3",
+      "bytes": 115999,
+      "sha256": "c966d14907c497dd89082cd4561deefed4a06b47732fcd2b58b5d3772323f236"
+    },
+    {
+      "file": "deprecated_male_air_off_continue_aristovich.mp3",
+      "bytes": 190281,
+      "sha256": "d4a247a34edf6b72e1c13c553e957bfd8fb13dc141a12d5bfc47b54c75c132f2"
+    },
+    {
+      "file": "en_deprecated_male_air_off.mp3",
+      "bytes": 177999,
+      "sha256": "4942f9f41c801b061391e95879ba0521cb1f483214bc8dc797b055b704b16277"
+    },
+    {
+      "file": "en_deprecated_male_air_off_continue.mp3",
+      "bytes": 295773,
+      "sha256": "19455afb6cb48b1428e37109a82809820f1490e5aa26c1560e427af0f6eb9200"
+    },
+    {
+      "file": "en_female_air_off.mp3",
+      "bytes": 338213,
+      "sha256": "54bc963f0306f9caed7edbc97ff71ceef5935b062f79ba0ce24a28332503eb06"
+    },
+    {
+      "file": "en_female_air_off_continue.mp3",
+      "bytes": 589848,
+      "sha256": "337a98f38b408110ff6db319a05d5388860954377359ecf7bf92ad1153aeed79"
+    },
+    {
+      "file": "en_female_air_on.mp3",
+      "bytes": 790233,
+      "sha256": "0d83d36becec16b022cfbff0491a9625ed01375f699dc12432ccb3f603f9ec53"
+    },
+    {
+      "file": "en_female_artillery_off.mp3",
+      "bytes": 317013,
+      "sha256": "480c159f27faabf20412fbd0ef74f64f7047ef61543818692a9a17b0a5939466"
+    },
+    {
+      "file": "en_female_artillery_off_continue.mp3",
+      "bytes": 691529,
+      "sha256": "0c6ecbd63985c41639b38112c783dbc61830cfb13c0fda0e67e6e7c6217d5f6a"
+    },
+    {
+      "file": "en_female_artillery_on.mp3",
+      "bytes": 790245,
+      "sha256": "786ebb5cb88795bbd3fec291bc9025bcd4d144eaa6fd4e0f7c11914a76934c96"
+    },
+    {
+      "file": "en_female_ballistic_on.mp3",
+      "bytes": 414549,
+      "sha256": "44815edb7f487c053b6ca626eed77cd59198bf8559de1165dc7dfd1ddf1b48e2"
+    },
+    {
+      "file": "en_female_chemical_off.mp3",
+      "bytes": 322863,
+      "sha256": "89e3050930823b0c9bef72ea729a913dae4303b33cb823a01d08906de2970a62"
+    },
+    {
+      "file": "en_female_chemical_off_continue.mp3",
+      "bytes": 716395,
+      "sha256": "6848ae627f4b97b8ac11e50e376c793e71e945ac0e158f5744ec0960e052fc0c"
+    },
+    {
+      "file": "en_female_chemical_on.mp3",
+      "bytes": 785889,
+      "sha256": "ebf5e65553a91b140deced05885210a46454701c567d9a018923ad87a3ae398a"
+    },
+    {
+      "file": "en_female_custom_off.mp3",
+      "bytes": 178628,
+      "sha256": "000e0d6334f007187fd04dc30f5b0b409a8812ae351f329fb8638e654ca25580"
+    },
+    {
+      "file": "en_female_custom_off_continue.mp3",
+      "bytes": 369844,
+      "sha256": "44434c5d40615e85bc31afa6085073c5d91df7c4058ab1fdf7d48f502ac871bc"
+    },
+    {
+      "file": "en_female_custom_on.mp3",
+      "bytes": 413730,
+      "sha256": "4eb914fb5e47e5b1029f85f6495566ce86b0ac086cf7cc6beb70f813cda91383"
+    },
+    {
+      "file": "en_female_drone_on.mp3",
+      "bytes": 448194,
+      "sha256": "02f7ae8d182e8b2547624b9576a4b2b4e43ffc1738ae3fde86c6ed9a63c4dcfe"
+    },
+    {
+      "file": "en_female_gbu_on.mp3",
+      "bytes": 414549,
+      "sha256": "eade803e3f1fb18bb2055159fa36e455dde1b6d07adfb07fea2273d74d86a9fb"
+    },
+    {
+      "file": "en_female_missile_on.mp3",
+      "bytes": 404309,
+      "sha256": "24cff2bafe8bc9f04779d7671f1607c288ab3846b340d32daf984fc9901cb332"
+    },
+    {
+      "file": "en_female_moment_of_silence.mp3",
+      "bytes": 804282,
+      "sha256": "75544e546646a6d5473ad8dbd878ecb2e344ac393e5aeaeaed41d4be569ac2b1"
+    },
+    {
+      "file": "en_female_nuclear_off.mp3",
+      "bytes": 313360,
+      "sha256": "42c7e38b4249649d84d5f3f693818beac95fd8f387a970f72020927e2c1f8b26"
+    },
+    {
+      "file": "en_female_nuclear_off_continue.mp3",
+      "bytes": 677635,
+      "sha256": "75cba1076443c6d88717c1b96a86da32d0337a42455b9824ce79237aa6594baa"
+    },
+    {
+      "file": "en_female_nuclear_on.mp3",
+      "bytes": 785895,
+      "sha256": "ba63b2a0b8d177fb9c29ed14956be664cf8a72a07ac9000f791e8e1a4f62bc76"
+    },
+    {
+      "file": "en_female_rapid_on.mp3",
+      "bytes": 600518,
+      "sha256": "b00e4d8ca1eb968bc4bf9ebc3d06ca7db26fa54c546c431a96d1624c914cd253"
+    },
+    {
+      "file": "en_female_trivae.mp3",
+      "bytes": 34099,
+      "sha256": "da60fdf075c2032bf14bd6cfb5117f88e4271a77d15a72d0870980c8a251f35f"
+    },
+    {
+      "file": "en_female_urban_fights_off.mp3",
+      "bytes": 303122,
+      "sha256": "bee2ae1f1454d7dd2bdd7d89ef2f68d33249d0c3013f1e04aece632e0c9829a5"
+    },
+    {
+      "file": "en_female_urban_fights_off_continue.mp3",
+      "bytes": 575969,
+      "sha256": "6dc068f06bfde40aa99231fcd7f316fba7c9ebfc9c7931741afa842eceeb8c84"
+    },
+    {
+      "file": "en_female_urban_fights_on.mp3",
+      "bytes": 790251,
+      "sha256": "fc37887e68a3e31177c7c83b7b8ace51c599d4eff8da5578c46851ed06218bb9"
+    },
+    {
+      "file": "en_inactive_aristovich.mp3",
+      "bytes": 165371,
+      "sha256": "5cb2d8a0f060b9376077b0fcedcaaea67cecda23a4882f8e5402b576680b5752"
+    },
+    {
+      "file": "en_inactive_aristovich_cut.mp3",
+      "bytes": 199944,
+      "sha256": "0c20132882c96821f7a14b9bf80dca3fa7163a64d503bc58af0cec46110a990b"
+    },
+    {
+      "file": "en_male_air_off.mp3",
+      "bytes": 338213,
+      "sha256": "54bc963f0306f9caed7edbc97ff71ceef5935b062f79ba0ce24a28332503eb06"
+    },
+    {
+      "file": "en_male_air_off_continue.mp3",
+      "bytes": 589848,
+      "sha256": "337a98f38b408110ff6db319a05d5388860954377359ecf7bf92ad1153aeed79"
+    },
+    {
+      "file": "en_male_air_on.mp3",
+      "bytes": 790233,
+      "sha256": "0d83d36becec16b022cfbff0491a9625ed01375f699dc12432ccb3f603f9ec53"
+    },
+    {
+      "file": "en_male_air_red_on.mp3",
+      "bytes": 958272,
+      "sha256": "579c20137d3ce5c1081c7e2c237cea8c287e9781761cc0d6c980ef97b20dba46"
+    },
+    {
+      "file": "en_male_air_yellow_on.mp3",
+      "bytes": 961584,
+      "sha256": "75f6063aea14f99dae3c5cf40c5b663c683944e6891d98162715b8563a3b5523"
+    },
+    {
+      "file": "en_male_artillery_off.mp3",
+      "bytes": 317013,
+      "sha256": "480c159f27faabf20412fbd0ef74f64f7047ef61543818692a9a17b0a5939466"
+    },
+    {
+      "file": "en_male_artillery_off_continue.mp3",
+      "bytes": 691529,
+      "sha256": "0c6ecbd63985c41639b38112c783dbc61830cfb13c0fda0e67e6e7c6217d5f6a"
+    },
+    {
+      "file": "en_male_artillery_on.mp3",
+      "bytes": 790245,
+      "sha256": "786ebb5cb88795bbd3fec291bc9025bcd4d144eaa6fd4e0f7c11914a76934c96"
+    },
+    {
+      "file": "en_male_ballistic_on.mp3",
+      "bytes": 414549,
+      "sha256": "44815edb7f487c053b6ca626eed77cd59198bf8559de1165dc7dfd1ddf1b48e2"
+    },
+    {
+      "file": "en_male_chemical_off.mp3",
+      "bytes": 322863,
+      "sha256": "89e3050930823b0c9bef72ea729a913dae4303b33cb823a01d08906de2970a62"
+    },
+    {
+      "file": "en_male_chemical_off_continue.mp3",
+      "bytes": 716395,
+      "sha256": "6848ae627f4b97b8ac11e50e376c793e71e945ac0e158f5744ec0960e052fc0c"
+    },
+    {
+      "file": "en_male_chemical_on.mp3",
+      "bytes": 785889,
+      "sha256": "ebf5e65553a91b140deced05885210a46454701c567d9a018923ad87a3ae398a"
+    },
+    {
+      "file": "en_male_custom_off.mp3",
+      "bytes": 178379,
+      "sha256": "dad9cb8ccc490b48d589483f55cf12887c97df052dfd139c3e75cb9df02443f0"
+    },
+    {
+      "file": "en_male_custom_off_continue.mp3",
+      "bytes": 435424,
+      "sha256": "d14388a69086bc2b3ff6af78aebcde17ff07dbd3c5624b90fbd278643504ed36"
+    },
+    {
+      "file": "en_male_custom_on.mp3",
+      "bytes": 413481,
+      "sha256": "94fd85a73648b979bef547dbc1fb4ed8164cd3408f4dc42e00f88523edbe7898"
+    },
+    {
+      "file": "en_male_drone_on.mp3",
+      "bytes": 448194,
+      "sha256": "02f7ae8d182e8b2547624b9576a4b2b4e43ffc1738ae3fde86c6ed9a63c4dcfe"
+    },
+    {
+      "file": "en_male_gbu_on.mp3",
+      "bytes": 414549,
+      "sha256": "eade803e3f1fb18bb2055159fa36e455dde1b6d07adfb07fea2273d74d86a9fb"
+    },
+    {
+      "file": "en_male_missile_on.mp3",
+      "bytes": 404309,
+      "sha256": "24cff2bafe8bc9f04779d7671f1607c288ab3846b340d32daf984fc9901cb332"
+    },
+    {
+      "file": "en_male_moment_of_silence.mp3",
+      "bytes": 804282,
+      "sha256": "75544e546646a6d5473ad8dbd878ecb2e344ac393e5aeaeaed41d4be569ac2b1"
+    },
+    {
+      "file": "en_male_nuclear_off.mp3",
+      "bytes": 313360,
+      "sha256": "42c7e38b4249649d84d5f3f693818beac95fd8f387a970f72020927e2c1f8b26"
+    },
+    {
+      "file": "en_male_nuclear_off_continue.mp3",
+      "bytes": 677635,
+      "sha256": "75cba1076443c6d88717c1b96a86da32d0337a42455b9824ce79237aa6594baa"
+    },
+    {
+      "file": "en_male_nuclear_on.mp3",
+      "bytes": 785895,
+      "sha256": "ba63b2a0b8d177fb9c29ed14956be664cf8a72a07ac9000f791e8e1a4f62bc76"
+    },
+    {
+      "file": "en_male_rapid_on.mp3",
+      "bytes": 600518,
+      "sha256": "b00e4d8ca1eb968bc4bf9ebc3d06ca7db26fa54c546c431a96d1624c914cd253"
+    },
+    {
+      "file": "en_male_trivae.mp3",
+      "bytes": 74112,
+      "sha256": "2896909c6ba916f763261294acbceb94915f4330d82dd9ed0a8590adc566e79f"
+    },
+    {
+      "file": "en_male_urban_fights_off.mp3",
+      "bytes": 303122,
+      "sha256": "bee2ae1f1454d7dd2bdd7d89ef2f68d33249d0c3013f1e04aece632e0c9829a5"
+    },
+    {
+      "file": "en_male_urban_fights_off_continue.mp3",
+      "bytes": 575969,
+      "sha256": "6dc068f06bfde40aa99231fcd7f316fba7c9ebfc9c7931741afa842eceeb8c84"
+    },
+    {
+      "file": "en_male_urban_fights_on.mp3",
+      "bytes": 790251,
+      "sha256": "fc37887e68a3e31177c7c83b7b8ace51c599d4eff8da5578c46851ed06218bb9"
+    },
+    {
+      "file": "female_air_off.mp3",
+      "bytes": 199946,
+      "sha256": "779592fe208f6923b8641013a64ac08ce182892bf5d4b5a5b637bbc3ac9ac7e6"
+    },
+    {
+      "file": "female_air_off_continue.mp3",
+      "bytes": 316988,
+      "sha256": "5fbf056c0c49cd3bbfd725460f1cd9d15e95576bb42ed1e7ee5187a15359451f"
+    },
+    {
+      "file": "female_air_on.mp3",
+      "bytes": 192938,
+      "sha256": "7e600e254ecf8008414f2ea139f5eea522d1a278204fee4ca7d3bfdbb3b43651"
+    },
+    {
+      "file": "female_air_red_on.mp3",
+      "bytes": 1052064,
+      "sha256": "c3ef1667d47706a64cc296291d2dc1550630bff1162fc009d7ba477571ed9f91"
+    },
+    {
+      "file": "female_air_yellow_on.mp3",
+      "bytes": 1041024,
+      "sha256": "e2d97e0fd613e33336226afb32a9898f910bcc05320fc083665f95882ef72285"
+    },
+    {
+      "file": "female_artillery_off.mp3",
+      "bytes": 204328,
+      "sha256": "e7cf21dde4580b6268e17d225d5bc645d1cf11be3728692a358c92df51516d0d"
+    },
+    {
+      "file": "female_artillery_off_continue.mp3",
+      "bytes": 322102,
+      "sha256": "3ded5f7bdf7fc8c324e32c5f27c6f8f570d03036a4dff05ab63cf7baf04dec58"
+    },
+    {
+      "file": "female_artillery_on.mp3",
+      "bytes": 192517,
+      "sha256": "aa4c9ca41851d1169c21b5983844eda19dd7f8b7b3ddff675e62d8585385d0c2"
+    },
+    {
+      "file": "female_ballistic_on.mp3",
+      "bytes": 298680,
+      "sha256": "ce2d8e8806e002d893d877d2dd3d77b33d0b4606b974a928f754d1061897d5ea"
+    },
+    {
+      "file": "female_chemical_off.mp3",
+      "bytes": 174383,
+      "sha256": "feebe02c5c5e6decd464761e7f9954a8cd2a324a9b11535f5d46c159b9c26ac9"
+    },
+    {
+      "file": "female_chemical_off_continue.mp3",
+      "bytes": 287837,
+      "sha256": "68acaa559cfe731dd42732a414a782ec6e7217fe85325786f2bd3aa734aa5d69"
+    },
+    {
+      "file": "female_chemical_on.mp3",
+      "bytes": 673215,
+      "sha256": "982415e1c70866175346c845da69261195006c99b74ad0adc13a81f5e8909c22"
+    },
+    {
+      "file": "female_custom_off.mp3",
+      "bytes": 238983,
+      "sha256": "ec4f6c60677219022c59491221b475c888526b1e4a46c7988cb837235e155dcd"
+    },
+    {
+      "file": "female_custom_off_continue.mp3",
+      "bytes": 387359,
+      "sha256": "3a0d8307a3b7e96ddcced3d8668de746e2b69ebb89cf2e4bc5a76d907c5bbf7a"
+    },
+    {
+      "file": "female_custom_on.mp3",
+      "bytes": 695604,
+      "sha256": "12c19176fa700c2a02b5343a572041367120aa9d52d8956787dbf38f0cf1d51a"
+    },
+    {
+      "file": "female_drone_on.mp3",
+      "bytes": 329400,
+      "sha256": "176e2cbca7cdaa356523e528ebbe7d51ab072e630787bd24bc6175c43d722018"
+    },
+    {
+      "file": "female_gbu_on.mp3",
+      "bytes": 296486,
+      "sha256": "285f7a2dd3b26e8ac12c286398a50d0ab28651ed803db29ae30fcb096e99eec2"
+    },
+    {
+      "file": "female_kab_on.mp3",
+      "bytes": 296486,
+      "sha256": "285f7a2dd3b26e8ac12c286398a50d0ab28651ed803db29ae30fcb096e99eec2"
+    },
+    {
+      "file": "female_missile_on.mp3",
+      "bytes": 414549,
+      "sha256": "d32a1b52922730163e01aab6fe5df2605f6a35af41d9cf8ee68a14a6b62b6443"
+    },
+    {
+      "file": "female_moment_of_silence.mp3",
+      "bytes": 824135,
+      "sha256": "c83a939ffc58f75ac0bedb563637095235d23790a533bdcf0e4c0a9584d94fb3"
+    },
+    {
+      "file": "female_nuclear_off.mp3",
+      "bytes": 194936,
+      "sha256": "894d895e4918a4e5f6cafa556b1bc62c9519b7582b815bb6ceaa9ce6e32963ef"
+    },
+    {
+      "file": "female_nuclear_off_continue.mp3",
+      "bytes": 307592,
+      "sha256": "7e757d282b607612916de2d0ee21dc84de0ce4763e501e3b37381cd8ddf4c338"
+    },
+    {
+      "file": "female_nuclear_on.mp3",
+      "bytes": 646158,
+      "sha256": "0b6586981cf5e3ceca9d62b28343395e6e21e5083795bf479277013bd21837d2"
+    },
+    {
+      "file": "female_pidvichenanebespeka_on.mp3",
+      "bytes": 647538,
+      "sha256": "dbc7d1da5adad21f13d4c8ef2ae7bb1f12355145047ba07ecdbf14157f0964ff"
+    },
+    {
+      "file": "female_raketa_on.mp3",
+      "bytes": 414549,
+      "sha256": "d32a1b52922730163e01aab6fe5df2605f6a35af41d9cf8ee68a14a6b62b6443"
+    },
+    {
+      "file": "female_rapid_on.mp3",
+      "bytes": 647538,
+      "sha256": "dbc7d1da5adad21f13d4c8ef2ae7bb1f12355145047ba07ecdbf14157f0964ff"
+    },
+    {
+      "file": "female_trivae.mp3",
+      "bytes": 34099,
+      "sha256": "da60fdf075c2032bf14bd6cfb5117f88e4271a77d15a72d0870980c8a251f35f"
+    },
+    {
+      "file": "female_urban_fights_off.mp3",
+      "bytes": 236513,
+      "sha256": "8f52174d636a7bcfb84c521ac021377a21df5fe45f51387a1b962326547827ab"
+    },
+    {
+      "file": "female_urban_fights_off_continue.mp3",
+      "bytes": 353556,
+      "sha256": "2fd92f392eb2b6043bd595596fea91e782ab7459a5ffbce240ee1c6f189bceb0"
+    },
+    {
+      "file": "female_urban_fights_on.mp3",
+      "bytes": 192727,
+      "sha256": "1cf8f5bfb390c343bcb1919515615fbfe32d51655419afacc395137f6a8aef77"
+    },
+    {
+      "file": "female_vulichnyboi_fights_off.mp3",
+      "bytes": 236513,
+      "sha256": "8f52174d636a7bcfb84c521ac021377a21df5fe45f51387a1b962326547827ab"
+    },
+    {
+      "file": "female_vulichnyboi_fights_off_continue.mp3",
+      "bytes": 353556,
+      "sha256": "2fd92f392eb2b6043bd595596fea91e782ab7459a5ffbce240ee1c6f189bceb0"
+    },
+    {
+      "file": "inactive_aristovich.mp3",
+      "bytes": 165371,
+      "sha256": "5cb2d8a0f060b9376077b0fcedcaaea67cecda23a4882f8e5402b576680b5752"
+    },
+    {
+      "file": "inactive_aristovich_cut.mp3",
+      "bytes": 199944,
+      "sha256": "0c20132882c96821f7a14b9bf80dca3fa7163a64d503bc58af0cec46110a990b"
+    },
+    {
+      "file": "male_air_off.mp3",
+      "bytes": 177999,
+      "sha256": "4942f9f41c801b061391e95879ba0521cb1f483214bc8dc797b055b704b16277"
+    },
+    {
+      "file": "male_air_off_continue.mp3",
+      "bytes": 295773,
+      "sha256": "19455afb6cb48b1428e37109a82809820f1490e5aa26c1560e427af0f6eb9200"
+    },
+    {
+      "file": "male_air_on.mp3",
+      "bytes": 380545,
+      "sha256": "a03f82feb5e7dabf137438c98f160b61f5d4b72bd0d4bb248aec2b59d747d6b3"
+    },
+    {
+      "file": "male_air_red_on.mp3",
+      "bytes": 1122624,
+      "sha256": "27545b8a6e01e3855f0509b0c8ff1ee8c10062c5866001635547fabfa89cfb4b"
+    },
+    {
+      "file": "male_air_yellow_on.mp3",
+      "bytes": 1084416,
+      "sha256": "7fe9a22685b67be2ad70d93d5a8f59fa0f98944f7f2ad3c86a2408c7a27d3f0b"
+    },
+    {
+      "file": "male_artillery_off.mp3",
+      "bytes": 205056,
+      "sha256": "096852eaea0a14a2c3943f7cd977fe4c806174d6c936039b0ccd1af9558a993e"
+    },
+    {
+      "file": "male_artillery_off_continue.mp3",
+      "bytes": 319172,
+      "sha256": "121bacf3cd25119ab4e1ffd5812892cdf442c7b69ea791555af5f8b8ebec8e49"
+    },
+    {
+      "file": "male_artillery_on.mp3",
+      "bytes": 375180,
+      "sha256": "6dccf7bde5f1e59025c320600bfa736ac720c2103970211a370f1f089c84cb87"
+    },
+    {
+      "file": "male_ballistic_on.mp3",
+      "bytes": 288440,
+      "sha256": "9b576836cbc4f4b95cd9de8de9d4307136adcb32883de93a69129c3ab822c4c2"
+    },
+    {
+      "file": "male_ballisticnotify_on.mp3",
+      "bytes": 288440,
+      "sha256": "9b576836cbc4f4b95cd9de8de9d4307136adcb32883de93a69129c3ab822c4c2"
+    },
+    {
+      "file": "male_chemical_off.mp3",
+      "bytes": 168592,
+      "sha256": "99618d852acffa8041160304ff90ac3e0a3333c771bdc7cecb531183ebe8b3a4"
+    },
+    {
+      "file": "male_chemical_off_continue.mp3",
+      "bytes": 277593,
+      "sha256": "903c45a551d1f2df9bf8926a986dd578f9ad5483cedbb8326820bcba53b8597a"
+    },
+    {
+      "file": "male_chemical_on.mp3",
+      "bytes": 668822,
+      "sha256": "5b17a4d20e8caeb2f109ab84af736dda8a63fc0959f5820bdccf3936ebdcdb9a"
+    },
+    {
+      "file": "male_custom_off.mp3",
+      "bytes": 208681,
+      "sha256": "381e0b89827c0f2d6a884fc8fb7c1484d512d411548f79ee3f3262fe989d41b6"
+    },
+    {
+      "file": "male_custom_off_continue.mp3",
+      "bytes": 324665,
+      "sha256": "b3ec7ac2e0857e8add5183634594c1ed5aa998527250c0709f843e68d80651fe"
+    },
+    {
+      "file": "male_custom_on.mp3",
+      "bytes": 605742,
+      "sha256": "a8a48233a4f2efbcc8b03fd880d4b6e1788528292d65376984db1d7f6cf40bea"
+    },
+    {
+      "file": "male_drone_on.mp3",
+      "bytes": 256258,
+      "sha256": "341699b43e93c3b9b95dae035d199998a58563def6b62083dba48b3f6c493622"
+    },
+    {
+      "file": "male_gbu_on.mp3",
+      "bytes": 269423,
+      "sha256": "3423dc3d46198bf33246d2f52e42f80754e9d6d7d84a71f66d72de3eb3fe41d3"
+    },
+    {
+      "file": "male_kab_on.mp3",
+      "bytes": 269423,
+      "sha256": "3423dc3d46198bf33246d2f52e42f80754e9d6d7d84a71f66d72de3eb3fe41d3"
+    },
+    {
+      "file": "male_missile_on.mp3",
+      "bytes": 414549,
+      "sha256": "a157ea48c1cd361a04cc9699855aeb9b2e2e20058909f1f55eb5f25c59e65c31"
+    },
+    {
+      "file": "male_moment_of_silence.mp3",
+      "bytes": 780249,
+      "sha256": "b617606b0bf1b3fa3bcd6815963fbd2232927df452b8307abb8369cdd14f8cee"
+    },
+    {
+      "file": "male_nuclear_off.mp3",
+      "bytes": 192735,
+      "sha256": "22608385f324b31a1b488fdb67138c6c10029c79cf8ced9eee2671e3110b2b22"
+    },
+    {
+      "file": "male_nuclear_off_continue.mp3",
+      "bytes": 293690,
+      "sha256": "cac3bc5efdaa9ac0d69aa7b753717ac6ee0e73810780dd8a74a481963f60090e"
+    },
+    {
+      "file": "male_nuclear_on.mp3",
+      "bytes": 646154,
+      "sha256": "eb651557a0a732a1acfaa267b384fad6d7698a2774b399b45b07b9220b410d65"
+    },
+    {
+      "file": "male_rapid_on.mp3",
+      "bytes": 576485,
+      "sha256": "8322a6a7db95b92f573bb5b4b3bb9097dabaa2dba647b204827d9c433183cbfe"
+    },
+    {
+      "file": "male_trivae.mp3",
+      "bytes": 74112,
+      "sha256": "2896909c6ba916f763261294acbceb94915f4330d82dd9ed0a8590adc566e79f"
+    },
+    {
+      "file": "male_urban_fights_off.mp3",
+      "bytes": 211640,
+      "sha256": "6193615ea7867d4bf1c553e33a6bbf6c5a214f0ea9d98f6b265cde340755e8ea"
+    },
+    {
+      "file": "male_urban_fights_off_continue.mp3",
+      "bytes": 326489,
+      "sha256": "414378b2323ead4546e1394f021919412c5e6e255e7b330f2ce7aaef58fde6fe"
+    },
+    {
+      "file": "male_urban_fights_on.mp3",
+      "bytes": 366947,
+      "sha256": "1459e9e4327c3fe750ec8250b1b96ed53a551743585cf1348309c2841fb1f5fe"
+    },
+    {
+      "file": "male_vulichniboi_off_continue.mp3",
+      "bytes": 326489,
+      "sha256": "414378b2323ead4546e1394f021919412c5e6e255e7b330f2ce7aaef58fde6fe"
+    },
+    {
+      "file": "male_vulichnyboi_fights_off.mp3",
+      "bytes": 211640,
+      "sha256": "6193615ea7867d4bf1c553e33a6bbf6c5a214f0ea9d98f6b265cde340755e8ea"
+    },
+    {
+      "file": "pidvichenyrivennebespeki_malevoice.mp3",
+      "bytes": 576485,
+      "sha256": "8322a6a7db95b92f573bb5b4b3bb9097dabaa2dba647b204827d9c433183cbfe"
+    }
+  ]
+}
