@@ -1,6 +1,6 @@
 <div align="center">
 
-![TrivogaSimulator — симулятор повітряної тривоги](assets/banner.png)
+![TrivogaSimulator — симулятор повітряної тривоги](banner.png)
 
 # TrivogaSimulator
 
