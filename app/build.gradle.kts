@@ -12,8 +12,8 @@ android {
         applicationId = "space.tihsmile.trivogasim"
         minSdk = 26
         targetSdk = 35
-        versionCode = 4
-        versionName = "0.4.0"
+        versionCode = 5
+        versionName = "0.5.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -25,6 +25,7 @@ android {
     }
     kotlinOptions { jvmTarget = "17" }
     buildFeatures { compose = true; buildConfig = true }
+    androidResources { noCompress += listOf("mp3") }
     packaging { resources.excludes += "/META-INF/{AL2.0,LGPL2.1}" }
 }
 

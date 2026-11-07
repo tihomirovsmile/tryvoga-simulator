@@ -76,6 +76,7 @@ class SimulatorViewModel(application: android.app.Application) : AndroidViewMode
     fun refreshSummary() = launchTask { repo.updateSummary() }
     fun clearCompleted() = launchTask { repo.clearCompleted(); message("Завершені події очищено") }
     fun onboardingDone() = launchTask { repo.prefs.setOnboarded(true) }
+    fun showDonationBanner(value: Boolean) = launchTask { repo.prefs.showDonationBanner(value) }
     fun setVoice(voice: String) = launchTask { repo.prefs.setVoice(voice) }
     fun setLanguage(language: String) = launchTask { repo.prefs.setLanguage(language) }
     fun setSound(value: Boolean) = launchTask { repo.prefs.setSound(value) }
@@ -192,7 +193,11 @@ fun SimulatorApp(vm: SimulatorViewModel, onExactAlarmSettings: () -> Unit, onDnd
         Scaffold(containerColor = Color.Black,
             modifier = Modifier.fillMaxSize().systemBarsPadding(),
             bottomBar = {
-                if (page in screensWithBottom) BottomNavigation(page) { page = it }
+                if (page in screensWithBottom) Column {
+                    if (settings.showDonationBanner && page in setOf("alerts", "map", "useful"))
+                        DonationBanner(onHide = { vm.showDonationBanner(false) })
+                    BottomNavigation(page) { page = it }
+                }
             }
         ) { inner ->
             Box(Modifier.fillMaxSize().padding(inner)) {
@@ -227,6 +232,7 @@ fun SimulatorApp(vm: SimulatorViewModel, onExactAlarmSettings: () -> Unit, onDnd
                         onNotifications = vm::setNotifications,
                         onVibration = vm::setVibration,
                         onVolume = vm::setVolume,
+                        onDonationBanner = vm::showDonationBanner,
                         onTest = { kind, ending ->
                             val sample = AlertEvent(id = "preview", regionId = "level1_15",
                                 regionName = "Полтавська обл.", type = kind.name,
@@ -236,12 +242,6 @@ fun SimulatorApp(vm: SimulatorViewModel, onExactAlarmSettings: () -> Unit, onDnd
                                 if (ending) settings.endVolume else if (kind == AlertKind.INCREASED) settings.increasedVolume else settings.alertVolume)
                         }, onStop = preview::stop)
                     page == "control" -> ControlScreen(onBack = { page = "settings" }, onRoute = { page = it })
-                    page == "compose-map" -> MapComposerScreen(events,
-                        onBack = { page = "control" },
-                        onCreate = { kinds, regions, level, delay, title, description, autoEnd ->
-                            vm.create(kinds,regions,level,delay,title,description,autoEnd)
-                            page = "alerts"
-                        })
                     page == "compose-rofl" -> RoflComposerScreen(
                         onBack = { page = "control" },
                         onCreate = { roflId, regions, delay, autoEnd ->

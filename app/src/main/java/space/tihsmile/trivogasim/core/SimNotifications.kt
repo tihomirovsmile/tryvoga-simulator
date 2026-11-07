@@ -67,7 +67,7 @@ class SimNotifications(private val context: Context) {
     private fun playSound(event: AlertEvent, settings: SimSettings, ending: Boolean) {
         val name = AudioCatalog.resolveName(context, event, ending)
         val resource = AudioCatalog.id(context, name)
-        val rofl = if (event.type == AlertKind.ROFL.name && !ending) RoflCatalog.byId(event.roflId) else null
+        val rofl = if (event.type == AlertKind.ROFL.name && !ending) CustomRoflStore.find(context, event.roflId) else null
         if (resource == 0 && rofl == null) return
         val volume = when {
             ending -> settings.endVolume
@@ -76,7 +76,10 @@ class SimNotifications(private val context: Context) {
         }
         val intent = Intent(context, AlertSoundService::class.java)
             .putExtra("resource", resource).putExtra("volume", volume)
-        rofl?.let { intent.putExtra("asset", it.audioFile) }
+        rofl?.let { if (it.audioFile.isNotBlank()) {
+            if (it.custom) intent.putExtra("custom_audio", it.audioFile)
+            else intent.putExtra("asset", it.audioFile)
+        } }
         try { ContextCompat.startForegroundService(context, intent) }
         catch (_: Exception) { /* Foreground starts may be blocked by the OS. */ }
     }
@@ -155,13 +158,17 @@ class SimNotifications(private val context: Context) {
             .setGroup("simulator_${event.regionId}")
             .setContentIntent(click)
             .setAutoCancel(true)
-        val roflImage = if (kind == AlertKind.ROFL && !ending) RoflCatalog.byId(event.roflId)?.imageFile else null
+        val roflImage = if (kind == AlertKind.ROFL && !ending) CustomRoflStore.find(context, event.roflId)?.imageFile else null
         val largeIcon = roflImage?.let { file ->
             try {
-                context.assets.open("alerts/rofl/images/$file").use { stream ->
-                    val bitmap = BitmapFactory.decodeStream(stream)
-                    Bitmap.createScaledBitmap(bitmap, 120, 120, true)
+                val bitmap = if (roflImage != null && CustomRoflStore.find(context, event.roflId)?.custom == true)
+                    CustomRoflStore.mediaPath(context, "images", file)?.let { f ->
+                        BitmapFactory.decodeFile(f.absolutePath, BitmapFactory.Options().apply { inSampleSize = 4 })
+                    }
+                else context.assets.open("alerts/rofl/images/$file").use { stream ->
+                    BitmapFactory.decodeStream(stream, null, BitmapFactory.Options().apply { inSampleSize = 4 })
                 }
+                bitmap?.let { Bitmap.createScaledBitmap(it, 120, 120, true) }
             } catch (_: Exception) { null }
         }
         (largeIcon ?: colorIcon(icon))?.let { notice.setLargeIcon(it) }

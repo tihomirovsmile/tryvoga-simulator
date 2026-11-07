@@ -11,6 +11,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -263,10 +266,17 @@ fun RegionScreen(selected: Set<String>, events: List<AlertEvent>, onToggle: (Str
     var query by remember { mutableStateOf("") }
     var browsed by remember { mutableStateOf<String?>(null) }
     var expanded by remember { mutableStateOf<String?>(null) }
+    val version by RegionCatalog.generation.collectAsState()
     val selectedRegions = selected.mapNotNull { RegionCatalog.byId[it] }
-    val visible = if (query.trim().isNotBlank()) RegionCatalog.regions
-        .filter { it.name.contains(query.trim(), true) }.take(150)
-        else RegionCatalog.regions.filter { it.parentId == browsed }
+    var visible by remember { mutableStateOf(emptyList<Region>()) }
+    LaunchedEffect(query, browsed, version) {
+        if (query.isNotBlank()) delay(230)
+        visible = withContext(Dispatchers.Default) {
+            if (query.isNotBlank()) RegionCatalog.search(query, limit = 160)
+            else RegionCatalog.children(browsed).map { RegionCatalog.onlySettlement(it.id) ?: it }
+                .distinctBy { it.id }
+        }
+    }
     Column(Modifier.fillMaxSize()) {
         Header("Регіони (${selected.size}/5)", {
             if (browsed == null) onBack()
@@ -331,8 +341,30 @@ fun RegionScreen(selected: Set<String>, events: List<AlertEvent>, onToggle: (Str
                     }
                 }
             }
-            item { Text("Довідник із локальних даних APK. Список населених пунктів поки неповний; дані про реальні тривоги не завантажуються.",
+            item { Text("Пошук використовує локальний індекс територій. Даних про реальні тривоги немає.",
                 color = Muted, fontSize = 11.sp) }
+        }
+    }
+}
+
+@Composable
+fun DonationBanner(onHide: () -> Unit) {
+    val context = LocalContext.current
+    Row(Modifier.fillMaxWidth().background(Color(0xFF24231C))
+        .padding(horizontal = 12.dp, vertical = 7.dp),
+        verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+        Icon(Icons.Default.VolunteerActivism, contentDescription = null, tint = Accent, modifier = Modifier.size(26.dp))
+        Column(Modifier.weight(1f).clickable {
+            try { context.startActivity(Intent(Intent.ACTION_VIEW,
+                Uri.parse("https://www.sternenkofund.org/donate"))) } catch (_: Exception) {}
+        }) {
+            Text("Підтримати «Спільноту Стерненка»", color = Color.White,
+                fontSize = 12.sp, fontWeight = FontWeight.Bold)
+            Text("Необов'язковий благодійний збір · Відкрити офіційний сайт",
+                color = Muted, fontSize = 10.sp, maxLines = 2)
+        }
+        IconButton(onClick = onHide, modifier = Modifier.size(30.dp)) {
+            Icon(Icons.Default.Close, contentDescription = "Приховати банер", tint = Muted)
         }
     }
 }
@@ -384,11 +416,30 @@ fun UsefulScreen() {
                     }
                 }
             }
+            Text("ПРО ЦЕЙ ЗАСТОСУНОК", color = Accent, fontWeight = FontWeight.Bold, fontSize = 12.sp)
             DarkCard {
-                Text("Про застосунок", color = Color.White, fontWeight = FontWeight.Bold)
-                Text("Локальна версія для самостійно створених сповіщень. Справжніх загроз не отримує і не замінює офіційне оповіщення.",
+                Text("Неофіційний незалежний симулятор", color = Color.White, fontWeight = FontWeight.Bold)
+                Text("«Тривога — Симулятор» — незалежний неофіційний проєкт. " +
+                    "Він не пов’язаний із розробниками застосунку «Повітряна тривога», " +
+                    "Ajax Systems, Stfalcon, державними органами або службами оповіщення України. " +
+                    "Усі події в цьому застосунку створені користувачем або заздалегідь налаштовані. " +
+                    "Вони не повідомляють про реальні загрози. Для безпеки користуйтеся офіційними каналами.",
                     color = Muted, fontSize = 13.sp)
+                Text("Назви, знаки, графічні елементи та аудіозаписи третіх сторін належать їхнім власникам. " +
+                    "Це повідомлення не надає права використовувати чужі матеріали без дозволу.",
+                    color = Muted, fontSize = 12.sp)
                 SimBadge()
+            }
+            DarkCard(onClick = { open("https://github.com/tihomirovsmile/tryvoga-simulator") }) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Default.Code, contentDescription = null, tint = Accent)
+                    Spacer(Modifier.width(12.dp))
+                    Column(Modifier.weight(1f)) {
+                        Text("Вихідний код на GitHub", color = Color.White, fontWeight = FontWeight.SemiBold)
+                        Text("tihomirovsmile/tryvoga-simulator", color = Muted, fontSize = 12.sp)
+                    }
+                    Icon(Icons.Default.OpenInNew, contentDescription = null, tint = Accent)
+                }
             }
         }
     }
@@ -401,6 +452,7 @@ fun SettingsScreen(settings: SimSettings, exact: Boolean, onRoute: (String) -> U
                    onVoice: (String) -> Unit, onLanguage: (String) -> Unit,
                    onSound: (Boolean) -> Unit, onNotifications: (Boolean) -> Unit,
                    onVibration: (Boolean) -> Unit, onVolume: (String, Float) -> Unit,
+                   onDonationBanner: (Boolean) -> Unit,
                    onTest: (AlertKind, Boolean) -> Unit, onStop: () -> Unit) {
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
         Header("Налаштування", trailing = { SimBadge() })
@@ -444,8 +496,10 @@ fun SettingsScreen(settings: SimSettings, exact: Boolean, onRoute: (String) -> U
             }
             Text("СИМУЛЯЦІЯ", color = Accent, fontSize = 12.sp, fontWeight = FontWeight.Bold)
             SettingsLink("Керування тривогами та загрозами", "Планування, повідомлення, відбій і журнал", "control", onRoute)
+            Text("ДОДАТКОВО", color = Accent, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+            DarkCard { SettingsToggle("Показувати благодійний банер", settings.showDonationBanner, onDonationBanner) }
             DarkCard {
-                Text("Тривога — Симулятор 0.4.0", color = Muted)
+                Text("Тривога — Симулятор 0.5.0", color = Muted)
                 Text("Дані про реальні загрози відсутні", color = Muted, fontSize = 12.sp)
             }
         }

@@ -1,6 +1,7 @@
 package space.tihsmile.trivogasim.ui
 
 import android.graphics.BitmapFactory
+import kotlinx.coroutines.launch
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -18,75 +19,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import space.tihsmile.trivogasim.core.*
 import space.tihsmile.trivogasim.data.*
-
-@Composable
-fun MapComposerScreen(events: List<AlertEvent>, onBack: () -> Unit,
-                      onCreate: (Set<AlertKind>, Set<String>, String, Long, String, String, Long) -> Unit) {
-    var territory by remember { mutableStateOf("OBLAST") }
-    var type by remember { mutableStateOf(AlertKind.AIR) }
-    var level by remember { mutableStateOf("RED") }
-    val chosen = remember { mutableStateListOf<String>() }
-    var minutes by remember { mutableStateOf("0") }
-    var seconds by remember { mutableStateOf("0") }
-    var autoEnd by remember { mutableStateOf("") }
-    var title by remember { mutableStateOf("") }
-    var body by remember { mutableStateOf("") }
-    var preview by remember { mutableStateOf(false) }
-    val delay = (minutes.toLongOrNull() ?: 0L).coerceIn(0,10080)*60L + (seconds.toLongOrNull() ?: 0L).coerceIn(0,59)
-    val options = if (territory == "SETTLEMENT")
-        listOf(AlertKind.AIR, AlertKind.ARTILLERY, AlertKind.FIGHTS, AlertKind.CHEMICAL,
-            AlertKind.RADIATION, AlertKind.INCREASED, AlertKind.DRONE, AlertKind.MISSILE,
-            AlertKind.BALLISTIC, AlertKind.BOMB, AlertKind.SPECIAL)
-        else listOf(AlertKind.AIR)
-    Column(Modifier.fillMaxSize().background(Color.Black)) {
-        Row(Modifier.fillMaxWidth().padding(horizontal=12.dp,vertical=5.dp), horizontalArrangement=Arrangement.spacedBy(6.dp)) {
-            listOf("OBLAST" to "Області", "RAYON" to "Райони", "SETTLEMENT" to "Н.п.").forEach { (mode,label) ->
-                ChoiceChip(label,territory==mode) { territory=mode;chosen.clear();type=AlertKind.AIR;preview=false }
-            }
-        }
-        Box(Modifier.weight(1f)) {
-            MapScreen(events,onBack=onBack,pickType=territory,picked=chosen.toSet(),onPick={ id ->
-                if ((type != AlertKind.AIR || !RegionCatalog.isPermanentTerritory(id)) && (id in chosen || chosen.size<1000)) {
-                    if (id in chosen) chosen.remove(id) else chosen.add(id)
-                    preview=false
-                }
-            })
-        }
-        Column(Modifier.fillMaxWidth().background(Tile,RoundedCornerShape(topStart=16.dp,topEnd=16.dp))
-            .padding(12.dp),verticalArrangement=Arrangement.spacedBy(7.dp)) {
-            Text("Обрано: ${chosen.size}",color=Color.White,fontWeight=FontWeight.Bold)
-            if (chosen.isNotEmpty()) Text(chosen.take(3).joinToString(", ") { RegionCatalog.getName(it) } +
-                if (chosen.size>3) " та ще ${chosen.size-3}" else "",color=Muted,fontSize=11.sp)
-            Row(Modifier.horizontalScroll(rememberScrollState()),horizontalArrangement=Arrangement.spacedBy(5.dp)) {
-                options.forEach { k -> ChoiceChip(k.label,type==k) { type=k } }
-            }
-            if (type==AlertKind.SPECIAL) {
-                OutlinedTextField(title,{title=it},label={Text("Назва повідомлення")},modifier=Modifier.fillMaxWidth())
-                OutlinedTextField(body,{body=it},label={Text("Текст повідомлення")},modifier=Modifier.fillMaxWidth())
-            }
-            if (type==AlertKind.AIR) Row(horizontalArrangement=Arrangement.spacedBy(8.dp)) {
-                ChoiceChip("🟡 Жовтий",level=="YELLOW") { level="YELLOW" }
-                ChoiceChip("🔴 Червоний",level=="RED") { level="RED" }
-            }
-            Row(horizontalArrangement=Arrangement.spacedBy(6.dp),verticalAlignment=Alignment.CenterVertically) {
-                OutlinedTextField(minutes,{minutes=it.filter(Char::isDigit).take(5)},label={Text("Затримка, хв")},
-                    singleLine=true,modifier=Modifier.weight(1f))
-                OutlinedTextField(seconds,{seconds=it.filter(Char::isDigit).take(2)},label={Text("Сек.")},
-                    singleLine=true,modifier=Modifier.weight(.65f))
-                if(type.hasAllClear) OutlinedTextField(autoEnd,{autoEnd=it.filter(Char::isDigit).take(5)},
-                    label={Text("Автовідбій, хв")},singleLine=true,modifier=Modifier.weight(1.1f))
-            }
-            if (preview) {
-                Text("Підтвердження: ${type.label} · ${chosen.size} територій · ${if (type==AlertKind.AIR) level else ""}",
-                    color=Accent,fontSize=12.sp)
-                BigButton("Оголосити (${chosen.size})", {
-                    onCreate(setOf(type),chosen.toSet(),level,delay,title,body,(autoEnd.toLongOrNull() ?: 0L)*60L)
-                    preview=false
-                },enabled=chosen.isNotEmpty())
-            } else BigButton("Перегляд перед оголошенням",{preview=true},enabled=chosen.isNotEmpty())
-        }
-    }
-}
 
 @Composable
 fun LevelChangeScreen(events: List<AlertEvent>, onBack: () -> Unit,
@@ -134,60 +66,101 @@ fun LevelChangeScreen(events: List<AlertEvent>, onBack: () -> Unit,
 fun RoflComposerScreen(onBack: () -> Unit,
                        onCreate: (String, Set<String>, Long, Long) -> Unit) {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    var created by remember { mutableStateOf(CustomRoflStore.list(context)) }
     var current by remember { mutableStateOf(RoflCatalog.entries.first().id) }
-    var query by remember { mutableStateOf("") }
-    var delay by remember { mutableStateOf("0") }
+    var delayText by remember { mutableStateOf("0") }
     var endAfter by remember { mutableStateOf("") }
-    val selected=remember { mutableStateListOf<String>() }
-    val version by RegionCatalog.generation.collectAsState()
-    val settlements=remember(version,query) {
-        if (query.trim().length < 2) emptyList()
-        else RegionCatalog.regions.filter { it.type=="SETTLEMENT" && it.name.contains(query.trim(),true) }.take(80)
-    }
+    val selected = remember { mutableStateListOf<String>() }
+    var title by remember { mutableStateOf("") }
+    var body by remember { mutableStateOf("") }
+    var audioUri by remember { mutableStateOf<android.net.Uri?>(null) }
+    var imageUri by remember { mutableStateOf<android.net.Uri?>(null) }
+    var error by remember { mutableStateOf("") }
+    var creating by remember { mutableStateOf(false) }
+    val audioPicker = androidx.activity.compose.rememberLauncherForActivityResult(
+        androidx.activity.result.contract.ActivityResultContracts.OpenDocument()
+    ) { uri -> audioUri = uri }
+    val imagePicker = androidx.activity.compose.rememberLauncherForActivityResult(
+        androidx.activity.result.contract.ActivityResultContracts.OpenDocument()
+    ) { uri -> imageUri = uri }
     Column(Modifier.fillMaxSize().background(Color.Black)) {
-        Header("Рофл тривоги",onBack,trailing={SimBadge()})
+        Header("Рофл тривоги", onBack, trailing = { SimBadge() })
         Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(16.dp),
-            verticalArrangement=Arrangement.spacedBy(9.dp)) {
-            Text("10 мемних подій · окремі від звичайних тривог",color=Muted,fontSize=12.sp)
-            RoflCatalog.entries.forEach { entry ->
-                DarkCard(onClick={current=entry.id}) {
-                    Row(verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(10.dp)) {
-                        val bitmap=remember(entry.imageFile) {
-                            try { context.assets.open("alerts/rofl/images/${entry.imageFile}").use { stream ->
-                                BitmapFactory.Options().let { opt ->
-                                    opt.inSampleSize=8
-                                    BitmapFactory.decodeStream(stream,null,opt)?.asImageBitmap()
+            verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Text("ШІСТЬ ГОТОВИХ СЦЕНАРІЇВ", color = Accent, fontWeight = FontWeight.Bold)
+            (RoflCatalog.entries + created).forEach { entry ->
+                DarkCard(onClick = { current = entry.id }) {
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                        val bitmap = remember(entry.id, entry.imageFile) {
+                            try {
+                                val opts = BitmapFactory.Options().apply { inSampleSize = 8 }
+                                if (entry.custom) {
+                                    CustomRoflStore.mediaPath(context, "images", entry.imageFile)?.let { f ->
+                                        BitmapFactory.decodeFile(f.absolutePath, opts)?.asImageBitmap()
+                                    }
+                                } else context.assets.open("alerts/rofl/images/${entry.imageFile}").use { stream ->
+                                    BitmapFactory.decodeStream(stream, null, opts)?.asImageBitmap()
                                 }
-                            } } catch(_:Exception) { null }
+                            } catch (_: Exception) { null }
                         }
-                        if(bitmap!=null) androidx.compose.foundation.Image(bitmap,null,Modifier.size(66.dp))
+                        if (bitmap != null) androidx.compose.foundation.Image(bitmap, null, Modifier.size(52.dp))
                         Column(Modifier.weight(1f)) {
-                            Text(entry.title,color=Color.White,fontSize=13.sp,fontWeight=FontWeight.Bold)
-                            Text(entry.body,color=Muted,fontSize=11.sp,maxLines=3)
+                            Text(entry.title, color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                            Text(entry.body, color = Muted, fontSize = 11.sp, maxLines = 2)
                         }
-                        RadioButton(current==entry.id,onClick={current=entry.id})
+                        RadioButton(current == entry.id, onClick = { current = entry.id })
                     }
+                    if (entry.custom) TextButton(onClick = {
+                        CustomRoflStore.delete(context, entry.id)
+                        created = CustomRoflStore.list(context)
+                        if (current == entry.id) current = RoflCatalog.entries.first().id
+                    }) { Text("Видалити шаблон", color = Accent) }
                 }
             }
-            Text("Населені пункти",color=Accent,fontWeight=FontWeight.Bold)
-            OutlinedTextField(query,{query=it},label={Text("Пошук міста або села")},modifier=Modifier.fillMaxWidth())
-            if(selected.isNotEmpty()) Text("Обрано: "+selected.take(6).joinToString(", ") {RegionCatalog.getName(it)},color=Accent,fontSize=12.sp)
-            settlements.forEach { r ->
-                Row(Modifier.fillMaxWidth().clickable {
-                    if(r.id in selected) selected.remove(r.id) else selected.add(r.id)
-                },verticalAlignment=Alignment.CenterVertically) {
-                    Checkbox(r.id in selected,onCheckedChange={ if(it) {if(r.id !in selected)selected.add(r.id)} else selected.remove(r.id) })
-                    Text(r.name+" · "+(RegionCatalog.oblastId(r.id)?.let(RegionCatalog::getName) ?: ""),color=Color.White,fontSize=12.sp)
+            Text("СТВОРИТИ ВЛАСНИЙ СЦЕНАРІЙ", color = Accent, fontWeight = FontWeight.Bold)
+            OutlinedTextField(title, { title = it.take(80) }, label = { Text("Назва") },
+                modifier = Modifier.fillMaxWidth(), singleLine = true)
+            OutlinedTextField(body, { body = it.take(800) }, label = { Text("Опис / текст повідомлення") },
+                modifier = Modifier.fillMaxWidth(), minLines = 2)
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Button(onClick = { audioPicker.launch(arrayOf("audio/*")) }, modifier = Modifier.weight(1f)) {
+                    Text(if (audioUri == null) "Обрати звук" else "Звук обрано")
+                }
+                Button(onClick = { imagePicker.launch(arrayOf("image/*")) }, modifier = Modifier.weight(1f)) {
+                    Text(if (imageUri == null) "Обрати зображення" else "Зображення обрано")
                 }
             }
-            OutlinedTextField(delay,{delay=it.filter(Char::isDigit).take(7)},label={Text("Затримка в секундах")},modifier=Modifier.fillMaxWidth())
-            OutlinedTextField(endAfter,{endAfter=it.filter(Char::isDigit).take(6)},label={Text("Автоматичний відбій, хвилин (необов'язково)")},modifier=Modifier.fillMaxWidth())
+            Text("Файли зберігаються лише на цьому пристрої. Аудіо та картинка необов'язкові.",
+                color = Muted, fontSize = 11.sp)
+            BigButton(if (creating) "Збереження…" else "Зберегти свій сценарій", {
+                creating = true
+                scope.launch {
+                    try {
+                        val added = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                            CustomRoflStore.add(context, title, body, audioUri, imageUri)
+                        }
+                        created = CustomRoflStore.list(context)
+                        current = added.id; title = ""; body = ""
+                        audioUri = null; imageUri = null; error = "Сценарій додано"
+                    } catch (e: Exception) { error = e.message ?: "Не вдалося додати" }
+                    finally { creating = false }
+                }
+            }, enabled = !creating && title.trim().length >= 2)
+            if (error.isNotBlank()) Text(error, color = Accent, fontSize = 12.sp)
+            Text("НАСЕЛЕНІ ПУНКТИ", color = Accent, fontWeight = FontWeight.Bold)
+            if (selected.isNotEmpty()) Text("Обрано: ${selected.size}", color = Accent)
+            TerritoryPicker("SETTLEMENT", selected, label = "Пошук населеного пункту")
+            OutlinedTextField(delayText, { delayText = it.filter(Char::isDigit).take(8) },
+                label = { Text("Затримка в секундах") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+            OutlinedTextField(endAfter, { endAfter = it.filter(Char::isDigit).take(6) },
+                label = { Text("Автовідбій, хвилини (необов'язково)") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
         }
         Box(Modifier.padding(14.dp)) {
-            BigButton("Оголосити рофл тривогу",{
-                onCreate(current,selected.toSet(),delay.toLongOrNull() ?: 0L,
-                    (endAfter.toLongOrNull() ?: 0L)*60L)
-            },enabled=selected.isNotEmpty())
+            BigButton("Оголосити обраний сценарій", {
+                onCreate(current, selected.toSet(), delayText.toLongOrNull() ?: 0L,
+                    (endAfter.toLongOrNull() ?: 0L) * 60L)
+            }, enabled = selected.isNotEmpty())
         }
     }
 }

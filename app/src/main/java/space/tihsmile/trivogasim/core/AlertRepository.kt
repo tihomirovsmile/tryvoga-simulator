@@ -52,11 +52,13 @@ class AlertRepository(context: Context) {
         val now = System.currentTimeMillis()
         for (regionId in regionIds) {
             for (type in types) {
-                require(if (type == AlertKind.AIR) RegionCatalog.type(regionId) in setOf("RAYON", "OBLAST", "SETTLEMENT")
-                    else RegionCatalog.isSettlement(regionId)) {
-                    if (type == AlertKind.AIR) "Оберіть область, район або населений пункт"
-                    else "Для цього сповіщення оберіть населений пункт"
-                }
+                require(when (type) {
+                    AlertKind.AIR -> RegionCatalog.type(regionId) == "RAYON"
+                    AlertKind.ARTILLERY, AlertKind.ROFL, AlertKind.INCREASED,
+                    AlertKind.DRONE, AlertKind.MISSILE, AlertKind.BALLISTIC,
+                    AlertKind.BOMB, AlertKind.SPECIAL, AlertKind.TECHNO -> RegionCatalog.isSettlement(regionId)
+                    else -> RegionCatalog.type(regionId) in setOf("RAYON", "SETTLEMENT")
+                }) { "Неприпустима територія для обраного типу сповіщення" }
                 require(type != AlertKind.AIR || !RegionCatalog.isPermanentTerritory(regionId)) {
                     "Це історично безперервна тривога, її не можна змінювати"
                 }
@@ -65,8 +67,8 @@ class AlertRepository(context: Context) {
                     id = uuid, notificationId = uuid.hashCode() and Int.MAX_VALUE,
                     regionId = regionId, regionName = RegionCatalog.getName(regionId),
                     type = type.name, dangerLevel = if (type == AlertKind.AIR) level else "",
-                    title = if (type == AlertKind.SPECIAL) title else if (type == AlertKind.ROFL) (RoflCatalog.byId(roflId)?.title ?: "Рофл тривога") else "",
-                    description = if (type == AlertKind.SPECIAL) description else if (type == AlertKind.ROFL) (RoflCatalog.byId(roflId)?.body ?: "") else "",
+                    title = if (type == AlertKind.SPECIAL) title else if (type == AlertKind.ROFL) (CustomRoflStore.find(app, roflId)?.title ?: "Рофл тривога") else "",
+                    description = if (type == AlertKind.SPECIAL) description else if (type == AlertKind.ROFL) (CustomRoflStore.find(app, roflId)?.body ?: "") else "",
                     roflId = if (type == AlertKind.ROFL) roflId else "",
                     autoEndAt = if (type.hasAllClear && autoEndSeconds > 0L) now + delaySeconds.coerceAtLeast(0)*1000L + autoEndSeconds*1000L else null,
                     createdAt = now, scheduledAt = now + delaySeconds.coerceAtLeast(0) * 1000L,

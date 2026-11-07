@@ -18,7 +18,8 @@ data class SimSettings(
     val vibration: Boolean = true,
     val alertVolume: Float = 1f,
     val endVolume: Float = 0.8f,
-    val increasedVolume: Float = 1f
+    val increasedVolume: Float = 1f,
+    val showDonationBanner: Boolean = true
 )
 
 class Prefs(private val context: Context) {
@@ -32,6 +33,7 @@ class Prefs(private val context: Context) {
         val alertVolume = floatPreferencesKey("alert_volume")
         val endVolume = floatPreferencesKey("end_volume")
         val increasedVolume = floatPreferencesKey("increased_volume")
+        val donationBanner = booleanPreferencesKey("show_donation_banner")
     }
 
     val settings: Flow<SimSettings> = context.dataStore.data.map { it ->
@@ -44,7 +46,8 @@ class Prefs(private val context: Context) {
             vibration = it[Keys.vibration] ?: true,
             alertVolume = it[Keys.alertVolume] ?: 1f,
             endVolume = it[Keys.endVolume] ?: 0.8f,
-            increasedVolume = it[Keys.increasedVolume] ?: 1f
+            increasedVolume = it[Keys.increasedVolume] ?: 1f,
+            showDonationBanner = it[Keys.donationBanner] ?: true
         )
     }
 
@@ -55,6 +58,7 @@ class Prefs(private val context: Context) {
     suspend fun setNotifications(value: Boolean) = context.dataStore.edit { it[Keys.notifications] = value }.let { Unit }
     suspend fun setSound(value: Boolean) = context.dataStore.edit { it[Keys.sound] = value }.let { Unit }
     suspend fun setVibration(value: Boolean) = context.dataStore.edit { it[Keys.vibration] = value }.let { Unit }
+    suspend fun showDonationBanner(show: Boolean) = context.dataStore.edit { it[Keys.donationBanner] = show }.let { Unit }
     suspend fun setVolume(which: String, value: Float) {
         context.dataStore.edit {
             when (which) {

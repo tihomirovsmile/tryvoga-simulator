@@ -21,6 +21,8 @@ jobs:
         run: python3 scripts/prefetch_katottg.py
       - name: Cache Ukraine boundaries for offline map
         run: python3 scripts/prefetch_geojson.py
+      - name: Compile simplified offline vector map
+        run: python3 scripts/compile_offline_map.py
       - name: Run Kotlin unit tests
         run: gradle --no-daemon :app:testDebugUnitTest
       - name: Build debug APK

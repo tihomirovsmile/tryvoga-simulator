@@ -15,7 +15,9 @@ class RegionCatalogTest {
             Region("hr_kremenchuk", "Кременчуцька громада", "HROMADA", "ray_poltava"),
             Region("city_kremenchuk", "м. Кременчук", "SETTLEMENT", "hr_kremenchuk"),
             Region("city_poltava", "м. Полтава", "SETTLEMENT", "ray_poltava"),
-            Region("obl_kirov", "Кіровоградська область", "OBLAST")
+            Region("obl_kirov", "Кіровоградська область", "OBLAST"),
+            Region("city_region_kyiv", "м. Київ", "OBLAST"),
+            Region("city_kyiv", "м. Київ", "SETTLEMENT", "city_region_kyiv")
         ))
     }
     @Test fun oblastSubscriptionIncludesSettlement() {
@@ -29,6 +31,14 @@ class RegionCatalogTest {
         assertFalse(RegionCatalog.isSettlement("obl_poltava"))
         assertFalse(RegionCatalog.isSettlement("hr_kremenchuk"))
         assertTrue(RegionCatalog.isSettlement("city_kremenchuk"))
+    }
+    @Test fun oneCityRegionIsExposedAsSettlement() {
+        assertEquals("city_kyiv", RegionCatalog.onlySettlement("city_region_kyiv")?.id)
+        assertEquals("city_kyiv", RegionCatalog.search("Київ").first().id)
+    }
+    @Test fun cachedIndexesReturnChildrenAndSearch() {
+        assertEquals(2, RegionCatalog.children("ray_poltava").size)
+        assertEquals("ray_poltava", RegionCatalog.search("Полтавський", "RAYON").first().id)
     }
     @Test fun airCanTargetDistrict() {
         assertEquals("RAYON", RegionCatalog.type("ray_poltava"))

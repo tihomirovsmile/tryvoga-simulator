@@ -21,6 +21,72 @@ object RegionCatalog {
         private set
     val generation = MutableStateFlow(0)
     @Volatile private var legacy: List<Region> = emptyList()
+    @Volatile private var childIndex: Map<String?, List<Region>> = emptyMap()
+    @Volatile private var byType: Map<String, List<SearchRecord>> = emptyMap()
+    @Volatile private var oblastOf: Map<String, String> = emptyMap()
+    @Volatile private var groupByOblast: Map<Pair<String, String>, List<Region>> = emptyMap()
+    @Volatile private var normalizedNameIndex: Map<Pair<String, String>, List<Region>> = emptyMap()
+    private fun foldedName(name: String) = normalize(name).removePrefix("м ")
+    private data class SearchRecord(val region: Region, val normalized: String, val oblastId: String?, val oblastName: String)
+
+    private fun normalize(input: String): String = input.lowercase(Locale("uk", "UA"))
+        .replace(Regex("[.,’']"), "").replace(Regex("\\s+"), " ").trim()
+
+    /** Indexed hierarchy: no 31k-row JSON traversal or grouping on every keystroke. */
+    fun children(parentId: String?): List<Region> = childIndex[parentId].orEmpty()
+    fun oblastFor(id: String): String? = oblastOf[id]
+    fun byOblast(type: String, oblastId: String, limit: Int = 150): List<Region> =
+        groupByOblast[type to oblastId].orEmpty().take(limit)
+    fun countByOblast(type: String, oblastId: String): Int =
+        groupByOblast[type to oblastId].orEmpty().size
+    fun findByName(type: String, name: String, oblastName: String? = null): Region? {
+        val matches = normalizedNameIndex[type to foldedName(name)].orEmpty()
+        if (oblastName == null) return matches.firstOrNull()
+        return matches.firstOrNull { r ->
+            oblastFor(r.id)?.let { getName(it) }?.equals(oblastName, ignoreCase = true) == true
+        } ?: matches.firstOrNull()
+    }
+
+    /** A special-status city with exactly one settlement must appear as a city, not an oblast. */
+    fun onlySettlement(parentId: String): Region? {
+        val node = byId[parentId] ?: return null
+        if (node.type != "OBLAST") return null
+        val descendants = children(parentId)
+        if (descendants.size == 1 && descendants[0].type == "SETTLEMENT") return descendants[0]
+        if (descendants.size == 1 && descendants[0].type == "HROMADA") {
+            return children(descendants[0].id).singleOrNull()?.takeIf { it.type == "SETTLEMENT" }
+        }
+        return null
+    }
+
+    /** Ranked and bounded results: exact settlement like 'м. Київ' precedes similarly named oblast. */
+    fun search(query: String, type: String? = null, limit: Int = 120, oblastId: String? = null): List<Region> {
+        val q = normalize(query).removePrefix("м ").replace("киев", "київ")
+        if (q.isBlank()) return if (oblastId == null) emptyList() else byOblast(type ?: "SETTLEMENT", oblastId, limit)
+        val source = if (type == null) byType.values.asSequence().flatten() else byType[type].orEmpty().asSequence()
+        val good = ArrayList<Pair<Int, Region>>(limit + 20)
+        for (record in source) {
+            if (type == null && record.region.type == "OBLAST" && record.region.name.startsWith("м. ") &&
+                normalizedNameIndex["SETTLEMENT" to foldedName(record.region.name)].orEmpty().isNotEmpty()) continue
+            if (oblastId != null && record.oblastId != oblastId) continue
+            val name = record.normalized.removePrefix("м ")
+            val hit = name.contains(q)
+            val oblastHit = record.oblastName.contains(q)
+            if (!hit && !oblastHit) continue
+            val score = when {
+                name == q && record.region.type == "SETTLEMENT" -> 0
+                name == q -> 1
+                name.startsWith(q) && record.region.type == "SETTLEMENT" -> 2
+                name.startsWith(q) -> 3
+                hit -> 4
+                else -> 5
+            }
+            good += score to record.region
+            if (good.size >= limit * 5) break
+        }
+        return good.sortedWith(compareBy<Pair<Int, Region>> { it.first }.thenBy { it.second.name })
+            .take(limit).map { it.second }
+    }
 
     private fun parseJson(data: String): Pair<List<Region>, Map<String, Pair<Double, Double>>> {
         val array = JSONArray(data)
@@ -57,6 +123,27 @@ object RegionCatalog {
         regions = newList
         byId = all.associateBy { it.id }
         coordinates = points
+        childIndex = all.groupBy { it.parentId }
+        val map = byId
+        val ob = HashMap<String, String>(all.size)
+        fun resolveOblast(id: String): String? {
+            var cur: String? = id
+            val visited = HashSet<String>()
+            while (cur != null && visited.add(cur)) {
+                val r = map[cur] ?: break
+                if (r.type == "OBLAST") return r.id
+                cur = r.parentId
+            }
+            return null
+        }
+        all.forEach { resolveOblast(it.id)?.let { obId -> ob[it.id] = obId } }
+        oblastOf = ob
+        byType = all.map { region ->
+            SearchRecord(region, normalize(region.name), ob[region.id],
+                ob[region.id]?.let { map[it]?.name?.let(::normalize) }.orEmpty())
+        }.groupBy { it.region.type }
+        groupByOblast = all.filter { ob[it.id] != null }.groupBy { it.type to ob[it.id]!! }
+        normalizedNameIndex = all.groupBy { it.type to foldedName(it.name) }
         generation.value += 1
     }
 
@@ -147,7 +234,7 @@ object RegionCatalog {
         return result
     }
 
-    fun oblastId(id: String): String? = lineage(id).firstOrNull { type(it) == "OBLAST" }
+    fun oblastId(id: String): String? = oblastOf[id] ?: lineage(id).firstOrNull { type(it) == "OBLAST" }
     private fun normalizedName(region: Region): String = region.name.lowercase(Locale("uk", "UA"))
         .removePrefix("м. ").replace(Regex("\\s+"), " ").trim()
     private fun signature(id: String): String {

@@ -26,9 +26,8 @@ fun ControlScreen(onBack: () -> Unit, onRoute: (String) -> Unit) {
         Header("Керування сповіщеннями", onBack, trailing = { SimBadge() })
         Column(Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(11.dp)) {
             Text("ОГОЛОШЕННЯ", color = Accent, fontWeight = FontWeight.Bold, fontSize = 12.sp)
-            ControlLink("Повітряна тривога", "Жовтий або червоний рівень · області, райони, міста", "compose-air", onRoute)
-            ControlLink("Оголосити по мапі", "Вибір області, району або населеного пункту на мапі", "compose-map", onRoute)
-            ControlLink("Рофл тривоги", "10 жартівливих подій із вашого архіву", "compose-rofl", onRoute)
+            ControlLink("Повітряна тривога", "Жовтий або червоний рівень · тільки райони", "compose-air", onRoute)
+            ControlLink("Рофл тривоги", "6 готових подій і власні сценарії", "compose-rofl", onRoute)
             ControlLink("Інші тривоги", "Артобстріли, хімічна та радіаційна небезпека, вуличні бої", "compose-other", onRoute)
             ControlLink("Загрози та повідомлення", "БПЛА, ракети, балістика, КАБ, підвищена небезпека, своє повідомлення", "compose-threat", onRoute)
             Spacer(Modifier.height(10.dp))
@@ -69,8 +68,6 @@ fun ComposeAlertScreen(mode: String, onBack: () -> Unit,
     }
     val types = remember(mode) { mutableStateListOf(categories.first()) }
     val selected = remember(mode) { mutableStateListOf<String>() }
-    val expanded = remember(mode) { mutableStateListOf<String>() }
-    var query by remember(mode) { mutableStateOf("") }
     var level by remember { mutableStateOf("RED") }
     var autoEndMinutes by remember { mutableStateOf("") }
     var territoryType by remember { mutableStateOf(if (isAir) "RAYON" else "SETTLEMENT") }
@@ -81,9 +78,7 @@ fun ComposeAlertScreen(mode: String, onBack: () -> Unit,
     var message by remember { mutableStateOf("") }
     val delay = ((hrs.toLongOrNull() ?: 0L).coerceIn(0, 24 * 365) * 3600L) +
         ((mins.toLongOrNull() ?: 0L).coerceIn(0, 59) * 60) + (secs.toLongOrNull() ?: 0L).coerceIn(0, 59)
-    val selectedType = if (isAir) territoryType else "SETTLEMENT"
-    val version by RegionCatalog.generation.collectAsState()
-    val provinces = remember(version) { RegionCatalog.regions.filter { it.type == "OBLAST" } }
+    val selectedType = if (isAir) "RAYON" else territoryType
     Column(Modifier.fillMaxSize()) {
         Header(when (mode) {
             "air" -> "Повітряна тривога"
@@ -97,14 +92,14 @@ fun ComposeAlertScreen(mode: String, onBack: () -> Unit,
                     fontWeight = FontWeight.Bold)
                 categories.forEach { category ->
                     DarkCard(onClick = {
-                        if (category in types) types.remove(category) else types.add(category)
+                        if (category in types) types.remove(category) else if (territoryType != "RAYON" || category != AlertKind.ARTILLERY) types.add(category)
                     }) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             AlertIllustration(category, Modifier.size(37.dp))
                             Spacer(Modifier.width(10.dp))
                             Text(category.label, color = Color.White, modifier = Modifier.weight(1f))
                             Checkbox(category in types, onCheckedChange = {
-                                if (it) { if (category !in types) types.add(category) }
+                                if (it) { if (category !in types && (territoryType != "RAYON" || category != AlertKind.ARTILLERY)) types.add(category) }
                                 else types.remove(category)
                             })
                         }
@@ -118,72 +113,34 @@ fun ComposeAlertScreen(mode: String, onBack: () -> Unit,
                     ChoiceChip("Червоний", level == "RED") { level = "RED" }
                 }
             }
-            Text(if (isAir) "Території України" else "Населені пункти України", color = Accent,
+            Text(if (isAir) "Райони України" else "Територія оголошення", color = Accent,
                 fontWeight = FontWeight.Bold)
-            if (isAir) {
-                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    ChoiceChip("Області", territoryType == "OBLAST") { territoryType="OBLAST"; selected.clear() }
-                    ChoiceChip("Райони", territoryType == "RAYON") { territoryType="RAYON"; selected.clear() }
-                    ChoiceChip("Н.п.", territoryType == "SETTLEMENT") { territoryType="SETTLEMENT"; selected.clear() }
+            if (!isAir && mode == "other") {
+                Row(horizontalArrangement = Arrangement.spacedBy(7.dp)) {
+                    ChoiceChip("Райони", territoryType == "RAYON") {
+                        territoryType = "RAYON"; selected.clear()
+                        types.remove(AlertKind.ARTILLERY)
+                    }
+                    ChoiceChip("Міста й села", territoryType == "SETTLEMENT") {
+                        territoryType = "SETTLEMENT"; selected.clear()
+                    }
                 }
             }
-            Text(if (isAir) "Можна оголошувати на всю область або вибірково на райони й населені пункти. Луганська область та АР Крим захищені від змін."
-                else "Виберіть місто, селище або село. Повний довідник завантажується з КАТОТТГ.",
-                color = Muted, fontSize = 12.sp)
-            OutlinedTextField(query, { query = it }, label = { Text("Область або назва ${if (isAir) "району" else "міста / села"}") },
-                modifier = Modifier.fillMaxWidth(), singleLine = true)
+            Text(when {
+                isAir -> "Повітряна тривога оголошується лише в районах. Луганщина й Крим залишаються незмінними."
+                territoryType == "RAYON" -> "Для районів доступні хімічна й радіаційна небезпека та вуличні бої. Артобстріл — лише для населеного пункту."
+                else -> "Обирайте населені пункти. Результати згруповані за областями."
+            }, color = Muted, fontSize = 12.sp)
             if (selected.isNotEmpty()) {
                 Text("Обрано: ${selected.size}", color = Accent)
-                selected.forEach { id ->
+                selected.take(20).forEach { id ->
                     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                         Text(RegionCatalog.getName(id), color = Color.White, modifier = Modifier.weight(1f), fontSize = 12.sp)
                         TextButton({ selected.remove(id) }) { Text("×", color = Accent) }
                     }
                 }
             }
-            Column(Modifier.fillMaxWidth().heightIn(max = 350.dp).verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(7.dp)) {
-                val searchable = remember(version, selectedType, query) {
-                    val all = RegionCatalog.regions.filter { it.type == selectedType &&
-                        (!isAir || !RegionCatalog.isPermanentTerritory(it.id)) }
-                    all.filter { query.isBlank() || it.name.contains(query.trim(), true) ||
-                        RegionCatalog.oblastId(it.id)?.let(RegionCatalog::getName)?.contains(query.trim(), true) == true }
-                }
-                val indexedByOblast = remember(searchable) {
-                    searchable.groupBy { r ->
-                        if (r.type == "OBLAST") r.name else
-                            RegionCatalog.oblastId(r.id)?.let(RegionCatalog::getName).orEmpty()
-                    }
-                }
-                provinces.forEach { province ->
-                    if (isAir && RegionCatalog.isPermanentTerritory(province.id)) return@forEach
-                    val matches = indexedByOblast[province.name].orEmpty()
-                    if (matches.isNotEmpty()) {
-                        val opened = province.id in expanded || query.isNotBlank()
-                        Column(Modifier.fillMaxWidth().background(Tile, RoundedCornerShape(12.dp))) {
-                            Row(Modifier.fillMaxWidth().clickable {
-                                if (province.id in expanded) expanded.remove(province.id) else expanded.add(province.id)
-                            }.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
-                                Text(province.name, color = Color.White, fontWeight = FontWeight.Bold,
-                                    fontSize = 13.sp, modifier = Modifier.weight(1f))
-                                Text("${matches.size}", color = Accent, fontSize = 12.sp)
-                            }
-                            if (opened) matches.take(150).forEach { r ->
-                                Row(Modifier.fillMaxWidth().clickable {
-                                    if (r.id in selected) selected.remove(r.id) else selected.add(r.id)
-                                }.padding(horizontal = 10.dp, vertical = 2.dp), verticalAlignment = Alignment.CenterVertically) {
-                                    Checkbox(r.id in selected, onCheckedChange = {
-                                        if (it) { if (r.id !in selected) selected.add(r.id) } else selected.remove(r.id)
-                                    }, modifier = Modifier.size(38.dp))
-                                    Text(r.name, color = Color.White, fontSize = 12.sp)
-                                }
-                            }
-                            if (opened && matches.size > 150) Text("Показано 150 із ${matches.size}. Уточніть пошук за назвою.",
-                                color = Muted, fontSize = 11.sp, modifier=Modifier.padding(10.dp))
-                        }
-                    }
-                }
-            }
+            TerritoryPicker(selectedType, selected, omitPermanent = isAir)
             Text("Відкладена відправка", color = Accent, fontWeight = FontWeight.Bold)
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 DelayField("Год.", hrs, { hrs = it.filter(Char::isDigit).take(4) }, Modifier.weight(1f))

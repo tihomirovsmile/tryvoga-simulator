@@ -27,7 +27,8 @@ class AlertSoundService : Service() {
         val resource = intent?.getIntExtra("resource", 0) ?: 0
         val volume = (intent?.getFloatExtra("volume", 0.8f) ?: 0.8f).coerceIn(0f, 1f)
         val assetName = intent?.getStringExtra("asset")
-        if (resource == 0 && assetName.isNullOrBlank()) { stopSelf(startId); return START_NOT_STICKY }
+        val customAudio = intent?.getStringExtra("custom_audio")
+        if (resource == 0 && assetName.isNullOrBlank() && customAudio.isNullOrBlank()) { stopSelf(startId); return START_NOT_STICKY }
         val status = NotificationCompat.Builder(this, "sim_playback_v3")
             .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle("СИМУЛЯЦІЯ · Звукове повідомлення")
@@ -40,14 +41,18 @@ class AlertSoundService : Service() {
         try {
             media.setAudioAttributes(AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_MEDIA)
                 .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION).build())
-            if (!assetName.isNullOrBlank()) {
+            if (!customAudio.isNullOrBlank()) {
+                val local = CustomRoflStore.mediaPath(this, "audio", customAudio)
+                    ?: error("Custom audio not found")
+                media.setDataSource(local.absolutePath)
+            } else if (!assetName.isNullOrBlank()) {
                 val safeName = assetName.substringAfterLast('/')
                 require(safeName.endsWith(".mp3"))
-                val cache = java.io.File(cacheDir, "rofl_${safeName}")
-                if (!cache.exists()) assets.open("alerts/rofl/audio/$safeName").use { input ->
-                    cache.outputStream().use { input.copyTo(it) }
-                }
-                media.setDataSource(cache.absolutePath)
+                // MP3 files are stored uncompressed in APK and played by file descriptor.
+                // Avoid copying multi-megabyte assets on the main service thread.
+                val afd = assets.openFd("alerts/rofl/audio/$safeName")
+                try { media.setDataSource(afd.fileDescriptor, afd.startOffset, afd.length) }
+                finally { afd.close() }
             } else media.setDataSource(this, android.net.Uri.parse("android.resource://$packageName/$resource"))
             media.setVolume(volume, volume)
             media.setOnCompletionListener {
